@@ -5,31 +5,61 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import LinkPage from "./pages/LinkPage";
+import Dashboard from "./pages/admin/Dashboard";
+import Services from "./pages/admin/Services";
+import { QuoteList, QuoteNew, QuoteDetail } from "./pages/admin/Quotes";
+import { InvoiceList, InvoiceNew, InvoiceDetail } from "./pages/admin/Invoices";
+import LinkPages from "./pages/admin/LinkPages";
+import Messages from "./pages/admin/Messages";
+import Users from "./pages/admin/Users";
+import WebContent from "./pages/admin/WebContent";
+import { useParams } from "wouter";
+
+function QuoteDetailWrapper() {
+  const params = useParams<{ id: string }>();
+  return <QuoteDetail id={parseInt(params.id || "0")} />;
+}
+
+function InvoiceDetailWrapper() {
+  const params = useParams<{ id: string }>();
+  return <InvoiceDetail id={parseInt(params.id || "0")} />;
+}
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      {/* Public routes */}
+      <Route path="/" component={Home} />
+
+      {/* Admin routes */}
+      <Route path="/admin" component={Dashboard} />
+      <Route path="/admin/servicios" component={Services} />
+      <Route path="/admin/presupuestos" component={QuoteList} />
+      <Route path="/admin/presupuestos/nuevo" component={QuoteNew} />
+      <Route path="/admin/presupuestos/:id" component={QuoteDetailWrapper} />
+      <Route path="/admin/facturas" component={InvoiceList} />
+      <Route path="/admin/facturas/nueva" component={InvoiceNew} />
+      <Route path="/admin/facturas/:id" component={InvoiceDetailWrapper} />
+      <Route path="/admin/linkpages" component={LinkPages} />
+      <Route path="/admin/mensajes" component={Messages} />
+      <Route path="/admin/usuarios" component={Users} />
+      <Route path="/admin/contenido" component={WebContent} />
+
+      {/* Link pages - must be last to avoid conflicts */}
+      <Route path="/404" component={NotFound} />
+      <Route path="/:slug" component={LinkPage} />
+
+      {/* Fallback */}
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />

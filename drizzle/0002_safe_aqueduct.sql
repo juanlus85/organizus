@@ -1,0 +1,1 @@
+ALTER TABLE `link_pages` MODIFY COLUMN `links` json;
