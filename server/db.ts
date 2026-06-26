@@ -11,6 +11,7 @@ import {
   invoiceItems, InvoiceItem, InsertInvoiceItem,
   linkPages, LinkPage, InsertLinkPage,
   contactMessages, ContactMessage, InsertContactMessage,
+  webServices, WebService, InsertWebService,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -366,4 +367,31 @@ export async function deleteContactMessage(id: number) {
   const db = await getDb();
   if (!db) return;
   await db.delete(contactMessages).where(eq(contactMessages.id, id));
+}
+
+// ─── Web Public Services (vitrina pública) ────────────────────────────────────
+export async function getWebServices(onlyActive = false): Promise<WebService[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const query = db.select().from(webServices);
+  if (onlyActive) {
+    return query.where(eq(webServices.active, true)).orderBy(webServices.sortOrder, webServices.name);
+  }
+  return query.orderBy(webServices.sortOrder, webServices.name);
+}
+export async function createWebService(data: InsertWebService): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  const result = await db.insert(webServices).values(data);
+  return (result[0] as any).insertId;
+}
+export async function updateWebService(id: number, data: Partial<InsertWebService>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(webServices).set({ ...data, updatedAt: new Date() }).where(eq(webServices.id, id));
+}
+export async function deleteWebService(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(webServices).where(eq(webServices.id, id));
 }

@@ -82,13 +82,13 @@ export default function Services() {
   };
 
   return (
-    <AdminLayout title="Catálogo de servicios">
+    <AdminLayout title="Conceptos de facturación">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">Gestiona los servicios disponibles para añadir a presupuestos y facturas.</p>
+          <p className="text-sm text-gray-500">Catálogo interno de conceptos para añadir a presupuestos y facturas. Independiente de los servicios que se muestran en la web pública.</p>
           <Button onClick={() => setShowCreate(true)} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full gap-2">
-            <Plus className="w-4 h-4" /> Nuevo servicio
+            <Plus className="w-4 h-4" /> Nuevo concepto
           </Button>
         </div>
 
@@ -201,7 +201,7 @@ export default function Services() {
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Nuevo servicio</DialogTitle>
+            <DialogTitle>Nuevo concepto</DialogTitle>
           </DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(onCreateSubmit)(e); }} className="space-y-4">
             <div>
@@ -227,7 +227,7 @@ export default function Services() {
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => { setShowCreate(false); reset(); }}>Cancelar</Button>
               <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white" disabled={createMutation.isPending}>
-                {createMutation.isPending ? "Creando..." : "Crear servicio"}
+                {createMutation.isPending ? "Creando..." : "Crear concepto"}
               </Button>
             </DialogFooter>
           </form>

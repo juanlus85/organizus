@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { getLoginUrl } from "@/const";
 import { Link, useLocation } from "wouter";
 import {
-  LayoutDashboard, FileText, Receipt, Briefcase, Link2,
+  LayoutDashboard, FileText, Receipt, Briefcase, Link2, Globe,
   Users, MessageSquare, Settings, LogOut, Menu, X, ChevronRight
 } from "lucide-react";
 import { useState } from "react";
@@ -16,7 +16,8 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/presupuestos", label: "Presupuestos", icon: FileText },
   { href: "/admin/facturas", label: "Facturas", icon: Receipt },
-  { href: "/admin/servicios", label: "Servicios", icon: Briefcase },
+  { href: "/admin/servicios", label: "Conceptos", icon: Briefcase },
+  { href: "/admin/servicios-web", label: "Servicios web", icon: Globe },
   { href: "/admin/linkpages", label: "Link Pages", icon: Link2 },
   { href: "/admin/mensajes", label: "Mensajes", icon: MessageSquare },
   { href: "/admin/usuarios", label: "Usuarios", icon: Users },

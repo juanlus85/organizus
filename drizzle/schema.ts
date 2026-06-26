@@ -204,3 +204,19 @@ export const contactMessages = mysqlTable("contact_messages", {
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = typeof contactMessages.$inferInsert;
+
+// ─── Web Public Services (vitrina pública) ────────────────────────────────────
+// Separate from billing concepts (services table). These are shown on the public website.
+export const webServices = mysqlTable("web_services", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }).default("Calendar"), // lucide icon name
+  sortOrder: int("sortOrder").notNull().default(0),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WebService = typeof webServices.$inferSelect;
+export type InsertWebService = typeof webServices.$inferInsert;

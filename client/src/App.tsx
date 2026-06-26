@@ -14,6 +14,7 @@ import LinkPages from "./pages/admin/LinkPages";
 import Messages from "./pages/admin/Messages";
 import Users from "./pages/admin/Users";
 import WebContent from "./pages/admin/WebContent";
+import WebServices from "./pages/admin/WebServices";
 import { useParams } from "wouter";
 
 function QuoteDetailWrapper() {
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/admin/mensajes" component={Messages} />
       <Route path="/admin/usuarios" component={Users} />
       <Route path="/admin/contenido" component={WebContent} />
+      <Route path="/admin/servicios-web" component={WebServices} />
 
       {/* Link pages - must be last to avoid conflicts */}
       <Route path="/404" component={NotFound} />

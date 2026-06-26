@@ -13,6 +13,7 @@ import {
   getInvoices, getInvoiceById, getInvoiceItems, createInvoice, updateInvoice, deleteInvoice, getNextInvoiceNumber,
   getLinkPages, getLinkPageBySlug, getLinkPageById, createLinkPage, updateLinkPage, deleteLinkPage,
   getContactMessages, createContactMessage, markContactMessageRead, deleteContactMessage,
+  getWebServices, createWebService, updateWebService, deleteWebService,
 } from "./db";
 import { sendContactNotification } from "./emailService";
 import { buildQuoteHTML, buildInvoiceHTML } from "./pdfService";
@@ -85,7 +86,7 @@ export const appRouter = router({
     }),
 
     getPublicServices: publicProcedure.query(async () => {
-      return getServices(true);
+      return getWebServices(true);
     }),
 
     getLinkPage: publicProcedure
@@ -204,6 +205,43 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await deleteService(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ─── Web Public Services (vitrina pública) ─────────────────────────────────
+  webServices: router({
+    list: adminProcedure.query(async () => getWebServices()),
+    create: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        icon: z.string().optional(),
+        sortOrder: z.number().int().default(0),
+        active: z.boolean().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        const id = await createWebService(input);
+        return { id };
+      }),
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        description: z.string().optional(),
+        icon: z.string().optional(),
+        sortOrder: z.number().int().optional(),
+        active: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...rest } = input;
+        await updateWebService(id, rest);
+        return { success: true };
+      }),
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteWebService(input.id);
         return { success: true };
       }),
   }),

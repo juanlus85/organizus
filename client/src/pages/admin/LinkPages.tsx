@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, ExternalLink, Link2, GripVertical, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, Link2, X } from "lucide-react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
 } from "@/components/ui/dialog";
@@ -40,6 +40,168 @@ const defaultForm: PageForm = {
   links: [],
 };
 
+// ─── PageFormFields is defined OUTSIDE the parent component ──────────────────
+// This prevents React from remounting it on every render, which caused
+// the "one character at a time" typing bug.
+interface PageFormFieldsProps {
+  form: PageForm;
+  setForm: React.Dispatch<React.SetStateAction<PageForm>>;
+  isEditing: boolean;
+}
+
+function PageFormFields({ form, setForm, isEditing }: PageFormFieldsProps) {
+  const addLink = () => setForm((f) => ({ ...f, links: [...f.links, { title: "", url: "", active: true }] }));
+  const removeLink = (i: number) => setForm((f) => ({ ...f, links: f.links.filter((_, idx) => idx !== i) }));
+  const updateLink = (i: number, field: keyof LinkItem, value: string | boolean) => {
+    setForm((f) => {
+      const links = [...f.links];
+      links[i] = { ...links[i], [field]: value };
+      return { ...f, links };
+    });
+  };
+
+  return (
+    <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-xs font-semibold text-gray-500 mb-1 block">Slug (URL) *</label>
+          <Input
+            value={form.slug}
+            onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") }))}
+            placeholder="mi-pagina"
+            disabled={isEditing}
+          />
+          <p className="text-xs text-gray-400 mt-1">organizus.es/{form.slug || "mi-pagina"}</p>
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-500 mb-1 block">Nombre *</label>
+          <Input
+            value={form.name}
+            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+            placeholder="Tu nombre"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="text-xs font-semibold text-gray-500 mb-1 block">Biografía / Descripción</label>
+        <Textarea
+          value={form.bio}
+          onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
+          rows={2}
+          className="resize-none"
+          placeholder="Una breve descripción..."
+        />
+      </div>
+      <div>
+        <label className="text-xs font-semibold text-gray-500 mb-1 block">URL de foto de perfil</label>
+        <Input
+          value={form.photoUrl}
+          onChange={(e) => setForm((f) => ({ ...f, photoUrl: e.target.value }))}
+          placeholder="https://..."
+        />
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        <div>
+          <label className="text-xs font-semibold text-gray-500 mb-1 block">Fondo</label>
+          <div className="flex gap-2 items-center">
+            <input
+              type="color"
+              value={form.backgroundColor}
+              onChange={(e) => setForm((f) => ({ ...f, backgroundColor: e.target.value }))}
+              className="w-8 h-8 rounded cursor-pointer border border-gray-200"
+            />
+            <Input
+              value={form.backgroundColor}
+              onChange={(e) => setForm((f) => ({ ...f, backgroundColor: e.target.value }))}
+              className="text-xs"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-500 mb-1 block">Texto</label>
+          <div className="flex gap-2 items-center">
+            <input
+              type="color"
+              value={form.textColor}
+              onChange={(e) => setForm((f) => ({ ...f, textColor: e.target.value }))}
+              className="w-8 h-8 rounded cursor-pointer border border-gray-200"
+            />
+            <Input
+              value={form.textColor}
+              onChange={(e) => setForm((f) => ({ ...f, textColor: e.target.value }))}
+              className="text-xs"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-gray-500 mb-1 block">Acento</label>
+          <div className="flex gap-2 items-center">
+            <input
+              type="color"
+              value={form.accentColor}
+              onChange={(e) => setForm((f) => ({ ...f, accentColor: e.target.value }))}
+              className="w-8 h-8 rounded cursor-pointer border border-gray-200"
+            />
+            <Input
+              value={form.accentColor}
+              onChange={(e) => setForm((f) => ({ ...f, accentColor: e.target.value }))}
+              className="text-xs"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Links */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-semibold text-gray-500">Enlaces</label>
+          <Button size="sm" variant="outline" onClick={addLink} className="text-xs gap-1 h-7">
+            <Plus className="w-3 h-3" /> Añadir enlace
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {form.links.map((link, i) => (
+            <div key={i} className="flex gap-2 items-center p-2 bg-gray-50 rounded-lg">
+              <div className="flex-1 grid grid-cols-2 gap-2">
+                <Input
+                  value={link.title}
+                  onChange={(e) => updateLink(i, "title", e.target.value)}
+                  placeholder="Título"
+                  className="text-xs h-8"
+                />
+                <Input
+                  value={link.url}
+                  onChange={(e) => updateLink(i, "url", e.target.value)}
+                  placeholder="https://..."
+                  className="text-xs h-8"
+                />
+              </div>
+              <button
+                onClick={() => updateLink(i, "active", !link.active)}
+                className={`text-xs px-2 py-1 rounded-full font-medium transition-colors ${link.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+              >
+                {link.active ? "On" : "Off"}
+              </button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => removeLink(i)}
+                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+              >
+                <X className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          ))}
+          {form.links.length === 0 && (
+            <p className="text-xs text-gray-400 text-center py-3">No hay enlaces. Añade el primero.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 export default function LinkPages() {
   const utils = trpc.useUtils();
   const { data: pages, isLoading } = trpc.linkPages.list.useQuery();
@@ -48,12 +210,21 @@ export default function LinkPages() {
   const [form, setForm] = useState<PageForm>(defaultForm);
 
   const createMutation = trpc.linkPages.create.useMutation({
-    onSuccess: () => { utils.linkPages.list.invalidate(); toast.success("Página creada"); setShowCreate(false); setForm(defaultForm); },
+    onSuccess: () => {
+      utils.linkPages.list.invalidate();
+      toast.success("Página creada");
+      setShowCreate(false);
+      setForm(defaultForm);
+    },
     onError: (e) => toast.error(e.message || "Error al crear"),
   });
 
   const updateMutation = trpc.linkPages.update.useMutation({
-    onSuccess: () => { utils.linkPages.list.invalidate(); toast.success("Página actualizada"); setEditingPage(null); },
+    onSuccess: () => {
+      utils.linkPages.list.invalidate();
+      toast.success("Página actualizada");
+      setEditingPage(null);
+    },
     onError: (e) => toast.error(e.message || "Error al actualizar"),
   });
 
@@ -77,21 +248,13 @@ export default function LinkPages() {
     });
   };
 
-  const addLink = () => setForm((f) => ({ ...f, links: [...f.links, { title: "", url: "", active: true }] }));
-  const removeLink = (i: number) => setForm((f) => ({ ...f, links: f.links.filter((_, idx) => idx !== i) }));
-  const updateLink = (i: number, field: keyof LinkItem, value: any) => {
-    setForm((f) => {
-      const links = [...f.links];
-      links[i] = { ...links[i], [field]: value };
-      return { ...f, links };
-    });
-  };
-
   const handleSave = () => {
     if (!form.slug.trim()) { toast.error("El slug es requerido"); return; }
     if (!form.name.trim()) { toast.error("El nombre es requerido"); return; }
-    if (!/^[a-z0-9-]+$/.test(form.slug)) { toast.error("El slug solo puede contener letras minúsculas, números y guiones"); return; }
-
+    if (!/^[a-z0-9-]+$/.test(form.slug)) {
+      toast.error("El slug solo puede contener letras minúsculas, números y guiones");
+      return;
+    }
     if (editingPage) {
       updateMutation.mutate({ id: editingPage.id, ...form });
     } else {
@@ -99,95 +262,13 @@ export default function LinkPages() {
     }
   };
 
-  const PageForm = () => (
-    <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-xs font-semibold text-gray-500 mb-1 block">Slug (URL) *</label>
-          <Input
-            value={form.slug}
-            onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") }))}
-            placeholder="mi-pagina"
-            disabled={!!editingPage}
-          />
-          <p className="text-xs text-gray-400 mt-1">organizus.es/{form.slug || "mi-pagina"}</p>
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-gray-500 mb-1 block">Nombre *</label>
-          <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Tu nombre" />
-        </div>
-      </div>
-      <div>
-        <label className="text-xs font-semibold text-gray-500 mb-1 block">Biografía / Descripción</label>
-        <Textarea value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} rows={2} className="resize-none" placeholder="Una breve descripción..." />
-      </div>
-      <div>
-        <label className="text-xs font-semibold text-gray-500 mb-1 block">URL de foto de perfil</label>
-        <Input value={form.photoUrl} onChange={(e) => setForm((f) => ({ ...f, photoUrl: e.target.value }))} placeholder="https://..." />
-      </div>
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="text-xs font-semibold text-gray-500 mb-1 block">Fondo</label>
-          <div className="flex gap-2 items-center">
-            <input type="color" value={form.backgroundColor} onChange={(e) => setForm((f) => ({ ...f, backgroundColor: e.target.value }))} className="w-8 h-8 rounded cursor-pointer border border-gray-200" />
-            <Input value={form.backgroundColor} onChange={(e) => setForm((f) => ({ ...f, backgroundColor: e.target.value }))} className="text-xs" />
-          </div>
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-gray-500 mb-1 block">Texto</label>
-          <div className="flex gap-2 items-center">
-            <input type="color" value={form.textColor} onChange={(e) => setForm((f) => ({ ...f, textColor: e.target.value }))} className="w-8 h-8 rounded cursor-pointer border border-gray-200" />
-            <Input value={form.textColor} onChange={(e) => setForm((f) => ({ ...f, textColor: e.target.value }))} className="text-xs" />
-          </div>
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-gray-500 mb-1 block">Acento</label>
-          <div className="flex gap-2 items-center">
-            <input type="color" value={form.accentColor} onChange={(e) => setForm((f) => ({ ...f, accentColor: e.target.value }))} className="w-8 h-8 rounded cursor-pointer border border-gray-200" />
-            <Input value={form.accentColor} onChange={(e) => setForm((f) => ({ ...f, accentColor: e.target.value }))} className="text-xs" />
-          </div>
-        </div>
-      </div>
-
-      {/* Links */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-xs font-semibold text-gray-500">Enlaces</label>
-          <Button size="sm" variant="outline" onClick={addLink} className="text-xs gap-1 h-7">
-            <Plus className="w-3 h-3" /> Añadir enlace
-          </Button>
-        </div>
-        <div className="space-y-2">
-          {form.links.map((link, i) => (
-            <div key={i} className="flex gap-2 items-center p-2 bg-gray-50 rounded-lg">
-              <div className="flex-1 grid grid-cols-2 gap-2">
-                <Input value={link.title} onChange={(e) => updateLink(i, "title", e.target.value)} placeholder="Título" className="text-xs h-8" />
-                <Input value={link.url} onChange={(e) => updateLink(i, "url", e.target.value)} placeholder="https://..." className="text-xs h-8" />
-              </div>
-              <button
-                onClick={() => updateLink(i, "active", !link.active)}
-                className={`text-xs px-2 py-1 rounded-full font-medium transition-colors ${link.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
-              >
-                {link.active ? "On" : "Off"}
-              </button>
-              <Button size="sm" variant="ghost" onClick={() => removeLink(i)} className="h-8 w-8 p-0 text-gray-400 hover:text-red-500">
-                <X className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          ))}
-          {form.links.length === 0 && (
-            <p className="text-xs text-gray-400 text-center py-3">No hay enlaces. Añade el primero.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <AdminLayout title="Link Pages">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">Crea páginas de enlaces personalizadas accesibles en organizus.es/slug.</p>
+          <p className="text-sm text-gray-500">
+            Crea páginas de enlaces personalizadas accesibles en organizus.es/slug.
+          </p>
           <Button onClick={openCreate} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full gap-2">
             <Plus className="w-4 h-4" /> Nueva página
           </Button>
@@ -206,8 +287,10 @@ export default function LinkPages() {
             {pages?.map((page) => {
               const links = (page.links as LinkItem[]) || [];
               return (
-                <div key={page.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:border-orange-200 hover:shadow-md transition-all">
-                  {/* Preview header */}
+                <div
+                  key={page.id}
+                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:border-orange-200 hover:shadow-md transition-all"
+                >
                   <div
                     className="h-20 flex items-center justify-center"
                     style={{ backgroundColor: page.backgroundColor || "#f9fafb" }}
@@ -265,10 +348,14 @@ export default function LinkPages() {
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Nueva link page</DialogTitle></DialogHeader>
-          <PageForm />
+          <PageFormFields form={form} setForm={setForm} isEditing={false} />
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreate(false)}>Cancelar</Button>
-            <Button onClick={handleSave} disabled={createMutation.isPending} className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button
+              onClick={handleSave}
+              disabled={createMutation.isPending}
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
               {createMutation.isPending ? "Creando..." : "Crear página"}
             </Button>
           </DialogFooter>
@@ -279,10 +366,14 @@ export default function LinkPages() {
       <Dialog open={!!editingPage} onOpenChange={(o) => !o && setEditingPage(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Editar: {editingPage?.name}</DialogTitle></DialogHeader>
-          <PageForm />
+          <PageFormFields form={form} setForm={setForm} isEditing={true} />
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingPage(null)}>Cancelar</Button>
-            <Button onClick={handleSave} disabled={updateMutation.isPending} className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button
+              onClick={handleSave}
+              disabled={updateMutation.isPending}
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
               {updateMutation.isPending ? "Guardando..." : "Guardar cambios"}
             </Button>
           </DialogFooter>

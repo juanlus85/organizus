@@ -79,3 +79,9 @@
 - [x] Vitest: quote numbering logic
 - [x] Vitest: PDF HTML generation (quote + invoice)
 - [x] Vitest: auth middleware (logout + me)
+
+## Mejoras v2
+- [ ] Separar servicios web (vitrina pública) de conceptos de facturación (catálogo interno)
+- [ ] Renombrar sección admin "Servicios" a "Conceptos de facturación" (catálogo interno)
+- [ ] Añadir gestión de "Servicios web" en Contenido web (los que se muestran en la web pública)
+- [ ] Campo unidades en facturas igual que en presupuestos
