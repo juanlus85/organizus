@@ -238,6 +238,39 @@ export const appRouter = router({
         await updateWebService(id, rest);
         return { success: true };
       }),
+    updateImages: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        images: z.array(z.object({
+          key: z.string(),
+          url: z.string(),
+          caption: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        await updateWebService(input.id, { images: input.images });
+        return { success: true };
+      }),
+    uploadImage: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        filename: z.string(),
+        mimeType: z.string(),
+        dataBase64: z.string(),
+        caption: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const buffer = Buffer.from(input.dataBase64, "base64");
+        const key = `web-services/${input.id}/${Date.now()}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+        // Get current images and append
+        const current = await getWebServices();
+        const svc = current.find((s) => s.id === input.id);
+        const existingImages = (svc?.images as Array<{ key: string; url: string; caption?: string }>) || [];
+        const newImages = [...existingImages, { key, url, caption: input.caption }];
+        await updateWebService(input.id, { images: newImages });
+        return { key, url };
+      }),
     delete: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {

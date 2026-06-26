@@ -385,10 +385,10 @@ export async function createWebService(data: InsertWebService): Promise<number> 
   const result = await db.insert(webServices).values(data);
   return (result[0] as any).insertId;
 }
-export async function updateWebService(id: number, data: Partial<InsertWebService>) {
+export async function updateWebService(id: number, data: Partial<InsertWebService & { images: Array<{ key: string; url: string; caption?: string }> | null }>) {
   const db = await getDb();
   if (!db) return;
-  await db.update(webServices).set({ ...data, updatedAt: new Date() }).where(eq(webServices.id, id));
+  await db.update(webServices).set({ ...data, updatedAt: new Date() } as any).where(eq(webServices.id, id));
 }
 export async function deleteWebService(id: number) {
   const db = await getDb();

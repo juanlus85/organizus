@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Link } from "wouter";
 import {
   Mail, Phone, MapPin, Menu, X, ArrowRight, CheckCircle,
-  Calendar, BookOpen, Laptop, Users, ChevronDown
+  Calendar, BookOpen, Laptop, Users, ChevronDown, Images
 } from "lucide-react";
 
 const contactSchema = z.object({
@@ -41,9 +41,12 @@ function getServiceIcon(name: string) {
   return serviceIcons.default;
 }
 
+interface ServiceImage { key: string; url: string; caption?: string; }
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [lightbox, setLightbox] = useState<{ images: ServiceImage[]; index: number } | null>(null);
 
   const { data: content } = trpc.public.getSiteContent.useQuery();
   const { data: services } = trpc.public.getPublicServices.useQuery();
@@ -158,21 +161,51 @@ export default function Home() {
             <p className="text-gray-500 max-w-xl mx-auto">Soluciones adaptadas a las necesidades de organizaciones académicas y empresariales.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services && services.length > 0 ? services.map((service) => (
-              <div
-                key={service.id}
-                className="group p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50 transition-all duration-300 bg-white"
-              >
-                <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4 group-hover:bg-orange-100 transition-colors">
-                  {getServiceIcon(service.name)}
+            {services && services.length > 0 ? services.map((service) => {
+              const imgs = (service.images as ServiceImage[]) || [];
+              return (
+                <div key={service.id} className="group rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50 transition-all duration-300 bg-white overflow-hidden flex flex-col">
+                  {/* Image thumbnails */}
+                  {imgs.length > 0 && (
+                    <div className="relative">
+                      <div className={`grid gap-0.5 ${imgs.length === 1 ? "grid-cols-1" : imgs.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                        {imgs.slice(0, 3).map((img, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setLightbox({ images: imgs, index: i })}
+                            className="relative overflow-hidden aspect-video focus:outline-none"
+                          >
+                            <img src={img.url} alt={img.caption || service.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                            {i === 2 && imgs.length > 3 && (
+                              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                <span className="text-white font-bold text-lg">+{imgs.length - 3}</span>
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                      {imgs.length > 0 && (
+                        <button
+                          onClick={() => setLightbox({ images: imgs, index: 0 })}
+                          className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 hover:bg-black/80 transition-colors"
+                        >
+                          <Images className="w-3 h-3" /> {imgs.length}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <div className="p-6 flex-1">
+                    <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4 group-hover:bg-orange-100 transition-colors">
+                      {getServiceIcon(service.name)}
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2 text-lg">{service.name}</h3>
+                    {service.description && (
+                      <p className="text-gray-500 text-sm leading-relaxed">{service.description}</p>
+                    )}
+                  </div>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2 text-lg">{service.name}</h3>
-                {service.description && (
-                  <p className="text-gray-500 text-sm leading-relaxed">{service.description}</p>
-                )}
-              </div>
-            )) : (
-              // Fallback services
+              );
+            }) : (
               [
                 { icon: <Calendar className="w-6 h-6" />, title: "Gestión de eventos y congresos", desc: "Planificación y ejecución integral de eventos académicos y corporativos." },
                 { icon: <Laptop className="w-6 h-6" />, title: "Soluciones digitales", desc: "Desarrollo de herramientas digitales adaptadas a proyectos académicos y empresariales." },
@@ -188,6 +221,53 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Lightbox ── */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center"
+          onClick={() => setLightbox(null)}
+        >
+          {/* Close */}
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 rounded-full p-2.5 transition-colors z-10"
+            onClick={() => setLightbox(null)}
+          >
+            <X className="w-5 h-5" />
+          </button>
+          {/* Prev */}
+          {lightbox.images.length > 1 && (
+            <button
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-white/10 rounded-full p-3 transition-colors z-10"
+              onClick={(e) => { e.stopPropagation(); setLightbox((l) => l ? { ...l, index: (l.index - 1 + l.images.length) % l.images.length } : null); }}
+            >
+              <ArrowRight className="w-5 h-5 rotate-180" />
+            </button>
+          )}
+          {/* Image */}
+          <img
+            src={lightbox.images[lightbox.index].url}
+            alt={lightbox.images[lightbox.index].caption || ""}
+            className="max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+          {/* Next */}
+          {lightbox.images.length > 1 && (
+            <button
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-white/10 rounded-full p-3 transition-colors z-10"
+              onClick={(e) => { e.stopPropagation(); setLightbox((l) => l ? { ...l, index: (l.index + 1) % l.images.length } : null); }}
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          )}
+          {/* Counter */}
+          {lightbox.images.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm bg-black/40 px-3 py-1 rounded-full">
+              {lightbox.index + 1} / {lightbox.images.length}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── About ── */}
       <section id="sobre-nosotros" className="py-24 px-6 bg-gray-50">

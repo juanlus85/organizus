@@ -213,6 +213,7 @@ export const webServices = mysqlTable("web_services", {
   description: text("description"),
   icon: varchar("icon", { length: 50 }).default("Calendar"), // lucide icon name
   sortOrder: int("sortOrder").notNull().default(0),
+  images: json("images").$type<Array<{ key: string; url: string; caption?: string }>>(),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
