@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import AdminLayout from "./AdminLayout";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -34,14 +34,22 @@ export default function WebContent() {
   const utils = trpc.useUtils();
   const { data: content, isLoading } = trpc.public.getSiteContent.useQuery();
   const updateContent = trpc.admin.updateSiteContent.useMutation({
-    onSuccess: () => { utils.public.getSiteContent.invalidate(); toast.success("Contenido guardado"); },
+    onSuccess: () => {
+      // Allow re-hydration after save so fresh server values are reflected
+      initialized.current = false;
+      utils.public.getSiteContent.invalidate();
+      toast.success("Contenido guardado");
+    },
     onError: () => toast.error("Error al guardar"),
   });
 
   const [values, setValues] = useState<Record<string, string>>({});
+  const initialized = useRef(false);
 
   useEffect(() => {
-    if (content) {
+    // Only initialize once when data first arrives — never overwrite user edits
+    if (content && !initialized.current) {
+      initialized.current = true;
       setValues(content as Record<string, string>);
     }
   }, [content]);
