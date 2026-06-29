@@ -81,7 +81,19 @@
 - [x] Vitest: auth middleware (logout + me)
 
 ## Mejoras v2
-- [ ] Separar servicios web (vitrina pública) de conceptos de facturación (catálogo interno)
-- [ ] Renombrar sección admin "Servicios" a "Conceptos de facturación" (catálogo interno)
-- [ ] Añadir gestión de "Servicios web" en Contenido web (los que se muestran en la web pública)
-- [ ] Campo unidades en facturas igual que en presupuestos
+- [x] Separar servicios web (vitrina pública) de conceptos de facturación (catálogo interno)
+- [x] Renombrar sección admin "Servicios" a "Conceptos de facturación" (catálogo interno)
+- [x] Añadir gestión de "Servicios web" en Contenido web (los que se muestran en la web pública)
+- [x] Campo unidades en facturas igual que en presupuestos
+
+## Mejoras v3 - Link Pages Rediseño
+- [x] Subida de foto de perfil desde el admin
+- [x] Selector de tamaño de foto (pequeña, mediana, grande, muy grande)
+- [x] Selector de forma de foto (círculo, redondeada, cuadrada)
+- [x] 8 temas predefinidos con degradados modernos
+- [x] Fondo sólido o degradado CSS personalizable
+- [x] 6 estilos de botón (redondeado, píldora, cuadrado, contorno, sombra, cristal)
+- [x] Selector de color de botón y texto
+- [x] Selector de tipografía (Inter, Poppins, Playfair, Mono)
+- [x] Vista previa en tiempo real en el editor
+- [x] Página pública rediseñada con soporte de todos los nuevos campos

@@ -755,10 +755,20 @@ export const appRouter = router({
         name: z.string().min(1),
         bio: z.string().optional(),
         photoUrl: z.string().optional(),
+        photoKey: z.string().optional(),
         theme: z.string().optional(),
         backgroundColor: z.string().optional(),
         textColor: z.string().optional(),
         accentColor: z.string().optional(),
+        photoSize: z.string().optional(),
+        photoShape: z.string().optional(),
+        backgroundType: z.string().optional(),
+        backgroundGradient: z.string().optional(),
+        buttonStyle: z.string().optional(),
+        buttonBg: z.string().optional(),
+        buttonTextColor: z.string().optional(),
+        fontFamily: z.string().optional(),
+        showBranding: z.boolean().optional(),
         links: z.array(z.object({
           title: z.string(),
           url: z.string(),
@@ -771,6 +781,20 @@ export const appRouter = router({
         const id = await createLinkPage(input);
         return { id };
       }),
+    uploadPhoto: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        filename: z.string(),
+        mimeType: z.string(),
+        dataBase64: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const buffer = Buffer.from(input.dataBase64, "base64");
+        const key = `link-pages/${input.id}/${Date.now()}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.mimeType);
+        await updateLinkPage(input.id, { photoUrl: url, photoKey: key });
+        return { url, key };
+      }),
     update: adminProcedure
       .input(z.object({
         id: z.number(),
@@ -778,10 +802,20 @@ export const appRouter = router({
         name: z.string().min(1).optional(),
         bio: z.string().optional(),
         photoUrl: z.string().optional(),
+        photoKey: z.string().optional(),
         theme: z.string().optional(),
         backgroundColor: z.string().optional(),
         textColor: z.string().optional(),
         accentColor: z.string().optional(),
+        photoSize: z.string().optional(),
+        photoShape: z.string().optional(),
+        backgroundType: z.string().optional(),
+        backgroundGradient: z.string().optional(),
+        buttonStyle: z.string().optional(),
+        buttonBg: z.string().optional(),
+        buttonTextColor: z.string().optional(),
+        fontFamily: z.string().optional(),
+        showBranding: z.boolean().optional(),
         links: z.array(z.object({
           title: z.string(),
           url: z.string(),
