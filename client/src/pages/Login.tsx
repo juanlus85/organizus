@@ -44,8 +44,8 @@ export default function Login() {
         </div>
         <form onSubmit={submit} className="space-y-4">
           <label className="block text-sm font-semibold text-slate-700">
-            Correo electrónico
-            <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-3 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-100" />
+            Usuario o correo electrónico
+            <input type="text" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-3 outline-none transition focus:border-orange-500 focus:ring-4 focus:ring-orange-100" />
           </label>
           <label className="block text-sm font-semibold text-slate-700">
             Contraseña

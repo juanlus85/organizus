@@ -112,3 +112,5 @@
 - [x] Sustituir el logotipo con ruta administrada por una marca vectorial embebida en el frontend
 - [ ] Restaurar el logotipo original como activo local del frontend preservando su color corporativo
 - [ ] Verificar en el VPS que no quedan rutas heredadas de activos administrados en web pública, admin, link pages ni PDFs
+- [ ] Añadir un comando seguro para crear o restablecer el administrador local en la base de datos
+- [ ] Diagnosticar y configurar SMTP para las notificaciones del formulario de contacto

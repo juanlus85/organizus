@@ -27,7 +27,21 @@ async function ensureInitialAdmin() {
     return;
   }
   const existingUser = await db.getUserByEmail(email);
-  if (existingUser) return;
+  if (existingUser) {
+    if (process.env.ADMIN_RESET_PASSWORD === "true") {
+      await db.upsertUser({
+        openId: existingUser.openId,
+        name,
+        email,
+        loginMethod: "local",
+        passwordHash: hashPassword(password),
+        role: "admin",
+        lastSignedIn: new Date(),
+      });
+      console.log(`[Local auth] Contraseña del administrador restablecida para ${email}`);
+    }
+    return;
+  }
   await db.upsertUser({
     openId: `local_${randomBytes(20).toString("hex")}`,
     name,
@@ -44,12 +58,16 @@ export function registerLocalAuthRoutes(app: Express) {
   void ensureInitialAdmin();
 
   app.post("/api/auth/login", async (req: Request, res: Response) => {
-    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    const identifier = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
     const password = typeof req.body?.password === "string" ? req.body.password : "";
-    if (!email || !password) {
-      res.status(400).json({ error: "Email y contraseña son obligatorios." });
+    if (!identifier || !password) {
+      res.status(400).json({ error: "Usuario y contraseña son obligatorios." });
       return;
     }
+    const configuredUsername = process.env.ADMIN_USERNAME?.trim().toLowerCase();
+    const email = configuredUsername && identifier === configuredUsername
+      ? process.env.ADMIN_EMAIL?.trim().toLowerCase() || ""
+      : identifier;
     const user = await db.getUserByEmail(email);
     if (!user?.passwordHash || !verifyPassword(password, user.passwordHash)) {
       res.status(401).json({ error: "Credenciales incorrectas." });

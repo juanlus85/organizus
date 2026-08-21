@@ -109,7 +109,7 @@ export const appRouter = router({
         const id = await createContactMessage(input);
         // Send email notification using SMTP config from site content
         const content = await getSiteContent();
-        const adminEmail = content["admin_email"] || content["contact_email"] || "hi@organizus.es";
+        const adminEmail = process.env.ADMIN_EMAIL || content["admin_email"] || content["contact_email"] || "hi@organizus.es";
         const smtpHost = content["smtp_host"];
         const smtpPort = content["smtp_port"] ? parseInt(content["smtp_port"]) : 587;
         const smtpUser = content["smtp_user"];
