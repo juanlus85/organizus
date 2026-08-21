@@ -15,6 +15,27 @@ const FONT_LINKS: Record<string, string> = {
   mono: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap",
 };
 
+type PublicLink = { title: string; url: string; icon?: string; active: boolean };
+
+function normalizeLinks(value: unknown): PublicLink[] {
+  if (typeof value === "string") {
+    try {
+      return normalizeLinks(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => ({
+      title: typeof item.title === "string" ? item.title : "",
+      url: typeof item.url === "string" ? item.url : "",
+      icon: typeof item.icon === "string" ? item.icon : undefined,
+      active: item.active !== false,
+    }));
+}
+
 export default function LinkPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug || "";
@@ -42,7 +63,7 @@ export default function LinkPage() {
     );
   }
 
-  const links = (page.links as Array<{ title: string; url: string; icon?: string; active: boolean }>) || [];
+  const links = normalizeLinks(page.links);
   const activeLinks = links.filter((l) => l.active);
 
   const bg = (page as any).backgroundType === "gradient" && (page as any).backgroundGradient

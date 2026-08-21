@@ -15,6 +15,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface LinkItem { title: string; url: string; icon?: string; active: boolean; }
 
+function normalizeLinks(value: unknown): LinkItem[] {
+  if (typeof value === "string") {
+    try {
+      return normalizeLinks(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => ({
+      title: typeof item.title === "string" ? item.title : "",
+      url: typeof item.url === "string" ? item.url : "",
+      icon: typeof item.icon === "string" ? item.icon : undefined,
+      active: item.active !== false,
+    }));
+}
+
 interface PageForm {
   slug: string;
   name: string;
@@ -88,6 +107,7 @@ const FONTS = [
 
 // ─── Live preview ─────────────────────────────────────────────────────────────
 function LivePreview({ form }: { form: PageForm }) {
+  const activeLinks = normalizeLinks(form.links).filter((link) => link.active);
   const bg = form.backgroundType === "gradient" && form.backgroundGradient
     ? form.backgroundGradient
     : form.backgroundColor;
@@ -134,7 +154,7 @@ function LivePreview({ form }: { form: PageForm }) {
         {form.bio && <p className="text-xs text-center mb-3 opacity-70 leading-tight" style={{ color: form.textColor }}>{form.bio}</p>}
         {/* Links */}
         <div className="w-full space-y-1.5">
-          {form.links.filter(l => l.active).slice(0, 4).map((link, i) => (
+          {activeLinks.slice(0, 4).map((link, i) => (
             <div
               key={i}
               className={getButtonClass(form.buttonStyle)}
@@ -149,7 +169,7 @@ function LivePreview({ form }: { form: PageForm }) {
               {link.title || "Enlace"}
             </div>
           ))}
-          {form.links.filter(l => l.active).length === 0 && (
+          {activeLinks.length === 0 && (
             <div className="rounded-xl px-4 py-2.5 text-xs font-semibold text-center opacity-50" style={{ backgroundColor: form.accentColor, color: "#fff" }}>
               Ejemplo de enlace
             </div>
@@ -536,7 +556,7 @@ export default function LinkPages() {
       fontFamily: page.fontFamily || "inter",
       showBranding: page.showBranding !== false,
       active: page.active,
-      links: (page.links as LinkItem[]) || [],
+      links: normalizeLinks(page.links),
     });
   };
 
@@ -581,7 +601,7 @@ export default function LinkPages() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {pages?.map((page) => {
-              const links = (page.links as LinkItem[]) || [];
+              const links = normalizeLinks(page.links);
               const bg = page.backgroundType === "gradient" && page.backgroundGradient
                 ? page.backgroundGradient
                 : page.backgroundColor || "#0f172a";

@@ -114,3 +114,4 @@
 - [ ] Verificar en el VPS que no quedan rutas heredadas de activos administrados en web pública, admin, link pages ni PDFs
 - [ ] Añadir un comando seguro para crear o restablecer el administrador local en la base de datos
 - [ ] Diagnosticar y configurar SMTP para las notificaciones del formulario de contacto
+- [ ] Corregir la carga de Link Pages cuando enlaces antiguos no son una lista válida
