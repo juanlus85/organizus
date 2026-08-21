@@ -9,8 +9,7 @@ import {
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-
-const LOGO_URL = "/manus-storage/organizus-logo_0f569d60.png";
+import { BrandWordmark } from "@/components/BrandWordmark";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -49,7 +48,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-        <img src={LOGO_URL} alt="OrganizUS" className="h-10 mb-8" />
+        <BrandWordmark className="text-3xl mb-8" />
         <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm text-center">
           <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-4">
             <LayoutDashboard className="w-7 h-7 text-orange-500" />
@@ -72,7 +71,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   if (user?.role !== "admin") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-        <img src={LOGO_URL} alt="OrganizUS" className="h-10 mb-8" />
+        <BrandWordmark className="text-3xl mb-8" />
         <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm text-center">
           <h1 className="text-xl font-bold text-gray-900 mb-2">Acceso restringido</h1>
           <p className="text-gray-500 text-sm mb-6">No tienes permisos de administrador para acceder a este panel.</p>
@@ -88,7 +87,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
-        <img src={LOGO_URL} alt="OrganizUS" className="h-7 w-auto brightness-0 invert" />
+        <BrandWordmark light className="text-2xl" />
       </div>
 
       {/* Nav */}

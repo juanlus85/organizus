@@ -103,5 +103,10 @@
 - [x] Adaptar autenticación, almacenamiento y configuración de producción para el VPS
 - [x] Crear configuración de Nginx, servicio systemd y plantilla de variables de producción
 - [x] Documentar la instalación y actualización por SSH desde GitHub
-- [ ] Crear y publicar un repositorio privado de GitHub
+- [x] Crear y publicar un repositorio privado de GitHub
 - [ ] Instalar, configurar HTTPS y validar el servicio en el VPS
+- [ ] Configurar la aplicación desde la extensión Node.js de Plesk con variables de entorno gestionadas en el panel
+- [ ] Fijar una versión de pnpm compatible con Node.js 20 del VPS o seleccionar Node.js 22 en Plesk
+- [ ] Compilar con Node.js 23 de Plesk, establecer `dist/public` como raíz de documento y activar `dist/index.js`
+- [ ] Ejecutar las migraciones desde SSH aportando DATABASE_URL solo para ese proceso
+- [ ] Sustituir los activos con rutas administradas por archivos locales incluidos en el repositorio

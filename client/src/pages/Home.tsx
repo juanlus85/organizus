@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "wouter";
+import { BrandWordmark } from "@/components/BrandWordmark";
 import {
   Mail, Phone, MapPin, Menu, X, ArrowRight, CheckCircle,
   Calendar, BookOpen, Laptop, Users, ChevronDown, Images
@@ -22,8 +23,6 @@ const contactSchema = z.object({
 });
 
 type ContactForm = z.infer<typeof contactSchema>;
-
-const LOGO_URL = "/manus-storage/organizus-logo_0f569d60.png";
 
 const serviceIcons: Record<string, React.ReactNode> = {
   default: <BookOpen className="w-6 h-6" />,
@@ -84,7 +83,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="flex items-center justify-between h-16">
-            <img src={LOGO_URL} alt="OrganizUS" className="h-8 w-auto" />
+            <BrandWordmark className="text-2xl" />
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-8">
               <button onClick={() => scrollTo("servicios")} className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors">Servicios</button>
@@ -298,7 +297,7 @@ export default function Home() {
             <div className="relative">
               <div className="bg-gradient-to-br from-orange-500 to-green-500 rounded-3xl p-1 shadow-2xl">
                 <div className="bg-white rounded-3xl p-8">
-                  <img src={LOGO_URL} alt="OrganizUS" className="h-12 mb-6" />
+                  <BrandWordmark className="text-4xl mb-6" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
                       <Mail className="w-4 h-4 text-orange-500 shrink-0" />
@@ -397,7 +396,7 @@ export default function Home() {
       <footer className="bg-gray-900 text-gray-400 py-12 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <img src={LOGO_URL} alt="OrganizUS" className="h-8 w-auto opacity-80" />
+            <BrandWordmark light className="text-2xl opacity-80" />
             <p className="text-sm text-center">
               © {new Date().getFullYear()} OrganizUS. Todos los derechos reservados.
             </p>
