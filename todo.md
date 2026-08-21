@@ -109,4 +109,6 @@
 - [ ] Fijar una versión de pnpm compatible con Node.js 20 del VPS o seleccionar Node.js 22 en Plesk
 - [ ] Compilar con Node.js 23 de Plesk, establecer `dist/public` como raíz de documento y activar `dist/index.js`
 - [ ] Ejecutar las migraciones desde SSH aportando DATABASE_URL solo para ese proceso
-- [ ] Sustituir los activos con rutas administradas por archivos locales incluidos en el repositorio
+- [x] Sustituir el logotipo con ruta administrada por una marca vectorial embebida en el frontend
+- [ ] Restaurar el logotipo original como activo local del frontend preservando su color corporativo
+- [ ] Verificar en el VPS que no quedan rutas heredadas de activos administrados en web pública, admin, link pages ni PDFs
