@@ -97,3 +97,11 @@
 - [x] Selector de tipografía (Inter, Poppins, Playfair, Mono)
 - [x] Vista previa en tiempo real en el editor
 - [x] Página pública rediseñada con soporte de todos los nuevos campos
+
+## Despliegue autohospedado en VPS
+- [x] Auditar las dependencias administradas y definir sus equivalentes autohospedados
+- [x] Adaptar autenticación, almacenamiento y configuración de producción para el VPS
+- [x] Crear configuración de Nginx, servicio systemd y plantilla de variables de producción
+- [x] Documentar la instalación y actualización por SSH desde GitHub
+- [ ] Crear y publicar un repositorio privado de GitHub
+- [ ] Instalar, configurar HTTPS y validar el servicio en el VPS

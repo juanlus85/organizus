@@ -15,6 +15,7 @@ import Messages from "./pages/admin/Messages";
 import Users from "./pages/admin/Users";
 import WebContent from "./pages/admin/WebContent";
 import WebServices from "./pages/admin/WebServices";
+import Login from "./pages/Login";
 import { useParams } from "wouter";
 
 function QuoteDetailWrapper() {
@@ -32,6 +33,7 @@ function Router() {
     <Switch>
       {/* Public routes */}
       <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
 
       {/* Admin routes */}
       <Route path="/admin" component={Dashboard} />

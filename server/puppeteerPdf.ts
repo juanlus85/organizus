@@ -4,12 +4,14 @@
  */
 
 import puppeteer from "puppeteer-core";
+import { existsSync } from "node:fs";
 
 let _browserPath: string | null = null;
 
 function getChromiumPath(): string {
   if (_browserPath) return _browserPath;
   const candidates = [
+    process.env.PUPPETEER_EXECUTABLE_PATH,
     "/usr/bin/chromium",
     "/usr/bin/chromium-browser",
     "/usr/bin/google-chrome",
@@ -17,13 +19,10 @@ function getChromiumPath(): string {
     "/usr/local/bin/chromium",
   ];
   for (const p of candidates) {
-    try {
-      const { existsSync } = require("fs");
-      if (existsSync(p)) {
-        _browserPath = p;
-        return p;
-      }
-    } catch { /* continue */ }
+    if (p && existsSync(p)) {
+      _browserPath = p;
+      return p;
+    }
   }
   throw new Error("No Chromium/Chrome binary found on this system");
 }

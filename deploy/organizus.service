@@ -1,0 +1,16 @@
+[Unit]
+Description=OrganizUS web application
+After=network.target
+
+[Service]
+Type=simple
+User=__APP_USER__
+WorkingDirectory=/var/www/organizus
+EnvironmentFile=/var/www/organizus/.env
+ExecStart=/usr/bin/env pnpm start
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
