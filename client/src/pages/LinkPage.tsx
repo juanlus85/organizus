@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { useEffect } from "react";
 import { useParams } from "wouter";
 import { ExternalLink, Loader2 } from "lucide-react";
 
@@ -45,6 +46,32 @@ export default function LinkPage() {
     { enabled: !!slug }
   );
 
+  const pageBackground = page && (page as any).backgroundType === "gradient" && (page as any).backgroundGradient
+    ? (page as any).backgroundGradient
+    : page?.backgroundColor || "#0f172a";
+
+  useEffect(() => {
+    if (!page) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlBackground = html.style.background;
+    const previousBodyBackground = body.style.background;
+    const previousHtmlMinHeight = html.style.minHeight;
+    const previousBodyMinHeight = body.style.minHeight;
+
+    html.style.background = pageBackground;
+    body.style.background = pageBackground;
+    html.style.minHeight = "100%";
+    body.style.minHeight = "100%";
+
+    return () => {
+      html.style.background = previousHtmlBackground;
+      body.style.background = previousBodyBackground;
+      html.style.minHeight = previousHtmlMinHeight;
+      body.style.minHeight = previousBodyMinHeight;
+    };
+  }, [page, pageBackground]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "#0f172a" }}>
@@ -66,9 +93,7 @@ export default function LinkPage() {
   const links = normalizeLinks(page.links);
   const activeLinks = links.filter((l) => l.active);
 
-  const bg = (page as any).backgroundType === "gradient" && (page as any).backgroundGradient
-    ? (page as any).backgroundGradient
-    : page.backgroundColor || "#0f172a";
+  const bg = pageBackground;
 
   const textColor = page.textColor || "#ffffff";
   const accent = page.accentColor || "#f97316";
@@ -110,8 +135,8 @@ export default function LinkPage() {
       )}
 
       <div
-        className="min-h-screen flex flex-col items-center py-16 px-4"
-        style={{ background: bg, fontFamily: fontCss, color: textColor }}
+        className="min-h-screen w-full flex flex-col items-center py-16 px-4"
+        style={{ background: bg, minHeight: "100dvh", fontFamily: fontCss, color: textColor }}
       >
         <div className="w-full max-w-sm">
 

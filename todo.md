@@ -115,3 +115,12 @@
 - [ ] Añadir un comando seguro para crear o restablecer el administrador local en la base de datos
 - [ ] Diagnosticar y configurar SMTP para las notificaciones del formulario de contacto
 - [ ] Corregir la carga de Link Pages cuando enlaces antiguos no son una lista válida
+- [ ] Configurar directorio persistente y permisos para imágenes y PDFs subidos desde Plesk
+- [ ] Identificar el usuario de sistema de Plesk antes de aplicar permisos de escritura
+- [ ] Confirmar rutas correctas bajo /var/www/vhosts antes de modificar permisos
+- [ ] Obtener UID/GID del usuario de la suscripción y aplicarlos al directorio de subidas
+- [ ] Configurar UPLOAD_DIR como /var/www/vhosts/organizus.es/app/organizus/uploads
+- [ ] Asignar la propiedad de app/organizus al usuario de la suscripción Plesk mediante una referencia de httpdocs
+- [ ] Aplicar la referencia de propietario a la carpeta uploads creada posteriormente
+- [ ] Asegurar que el fondo de Link Pages cubra toda la altura de la ventana
+- [x] Identificar el usuario de sistema de Plesk antes de aplicar permisos de escritura
